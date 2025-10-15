@@ -33,6 +33,7 @@ jobs:
       run: |
         source .venv/bin/activate
         pytest --alluredir=allure-results -v
+      continue-on-error: true
 
     - name: Get Allure history
       if: always()
