@@ -30,22 +30,22 @@ jobs:
     - name: Run tests
       run: |
         source .venv/bin/activate
-        pytest --alluredir=allure-results -v
+        pytest --alluredir=allure-results-build -v
       continue-on-error: true
 
     - name: Load Allure history
       uses: actions/checkout@v3
       with:
         ref: gh-pages
-        path: allure-history
+        path: gh-pages-allure-history
 
     - name: Build test report
       uses: simple-elf/allure-report-action@v1.7
       if: always()
       with:
-        gh_pages: allure-history
-        allure_history: allure-history
-        allure_results: allure-results
+        gh_pages: gh-pages-allure-history
+        allure_history: gh-pages-allure-history/allure-history
+        allure_results: allure-results-build
     
     - name: List directories and files
       if: always()
