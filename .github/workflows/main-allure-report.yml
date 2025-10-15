@@ -7,9 +7,37 @@ on:
     workflow_dispatch:
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+    
+    steps:
+    # Checkout del código fuente (rama actual que lanza el workflow)
+    - name: Checkout source code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m venv .venv
+        source .venv/bin/activate
+        pip install pytest pytest-html allure-pytest
+
+    - name: Run tests
+      run: |
+        source .venv/bin/activate
+        pytest --alluredir=allure-results -v
+
   allure:
     name: Generate Allure Report
     runs-on: ubuntu-latest
+    needs: test
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
