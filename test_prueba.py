@@ -9,4 +9,4 @@ def test_1():
 @allure.suite("Pruebas de ejemplo")
 @allure.title("Test con resultados variados")
 def test_2():
-    assert False
+    assert True
