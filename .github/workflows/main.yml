@@ -34,12 +34,13 @@ jobs:
         python -m venv .venv
         source .venv/bin/activate
         pip install pytest
+        pip install pytest-html
         pip install allure-pytest
 
     - name: Run tests
       run: |
         source .venv/bin/activate
-        pytest -v
+        pytest --html=test/html/report.html --self-contained-html -v
 
     - name: HTML Report
       if: always()
