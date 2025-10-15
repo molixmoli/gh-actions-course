@@ -1,2 +1,0 @@
-# gh-actions-course
-Repository
