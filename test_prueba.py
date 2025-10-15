@@ -4,7 +4,7 @@ import allure
 @allure.suite("Pruebas de ejemplo")
 @allure.title("Test con resultados variados")
 def test_1():
-    assert True
+    assert False
 
 @allure.suite("Pruebas de ejemplo")
 @allure.title("Test con resultados variados")

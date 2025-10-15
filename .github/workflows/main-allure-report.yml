@@ -25,8 +25,6 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python -m venv .venv
-        source .venv/bin/activate
         pip install pytest pytest-html allure-pytest
 
     - name: Run tests
@@ -45,7 +43,7 @@ jobs:
       uses: simple-elf/allure-report-action@v1.7
       if: always()
       with:
-        gh_pages: gh-pages
+        gh_pages: allure-history
         allure_history: allure-history
         allure_results: allure-results
 
