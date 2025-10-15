@@ -51,27 +51,6 @@ jobs:
         gh_pages: 'gh-pages-dir'
         report_dir: 'test/html' # provide path to folder containing the html report
 
-    - name: Chart Report (single csv)
-      if: ${{ always() }}
-      uses: mgrybyk-org/html-trend-report-action@v1
-      id: chart-report # used in comment to PR
-      with:
-        report_id: 'Trend Report'
-        gh_pages: 'gh-pages-dir'
-        report_dir: 'test/data.csv' # provide path to csv file
-        list_dirs: ${{ github.ref == 'refs/heads/main' }}
-        report_type: csv
-
-    - name: Chart Report (multiple csv)
-      if: ${{ always() }}
-      uses: mgrybyk-org/html-trend-report-action@v1
-      id: chart-report-multi # used in comment to PR  
-      with:
-        report_id: 'Trend Report'
-        gh_pages: 'gh-pages-dir'
-        report_dir: 'test/csv' # provide path to folder containing csv files
-        report_type: csv
-
     - name: Git Commit and Push Action
       uses: mgrybyk-org/git-commit-pull-push-action@v1
       if: always()
