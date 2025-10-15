@@ -37,15 +37,21 @@ jobs:
       uses: actions/checkout@v3
       with:
         ref: gh-pages
-        path: gh-pages
+        path: allure-history
 
     - name: Build test report
       uses: simple-elf/allure-report-action@v1.7
       if: always()
       with:
-        gh_pages: gh-pages
+        gh_pages: allure-history
         allure_history: allure-history
         allure_results: allure-results
+    
+    - name: List directories and files
+      if: always()
+      run: |
+        echo "📁 Listado de carpetas en el workspace:"
+        ls -R
 
     - name: Publish test report
       uses: peaceiris/actions-gh-pages@v3
