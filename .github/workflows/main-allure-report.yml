@@ -1,10 +1,6 @@
-# NOTE: This workflow requires that the current repo have a branch 'gh-pages' to hold the github pages source
-
 name: "Ejemplo con Allure Report"
-description: Performs a test deployment of Allure Report with history
-
 on:
-    workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   test:
@@ -12,51 +8,61 @@ jobs:
 
     permissions:
       contents: write
-    
+
     steps:
-    # Checkout del código fuente (rama actual que lanza el workflow)
-    - name: Checkout source code
-      uses: actions/checkout@v3
+      # 1. Cargar historial desde gh-pages
+      - name: Load Allure history
+        uses: actions/checkout@v3
+        with:
+          ref: gh-pages
+          path: allure-history
+      # 2. Checkout del código fuente
+      - name: Checkout source code
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
+      # 3. Configurar Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
 
-    - name: Install dependencies
-      run: |
-        pip install pytest pytest-html allure-pytest
+      # 4. Instalar dependencias
+      - name: Install dependencies
+        run: |
+          pip install pytest allure-pytest
 
-    - name: Run tests
-      run: |
-        source .venv/bin/activate
-        pytest --alluredir=allure-results-build -v
-      continue-on-error: true
+      # 5. Ejecutar tests
+      - name: Run tests
+        run: |
+          pytest --alluredir=allure-results -v
+        continue-on-error: true
 
-    - name: Load Allure history
-      uses: actions/checkout@v3
-      with:
-        ref: gh-pages
-        path: gh-pages-allure-history
+      # 6. Verificar contenido de allure-results
+      - name: Verificar allure-results
+        run: |
+          echo "📁 Verificando allure-results:"
+          ls -l allure-results || echo "❌ No se encontró allure-results"
 
-    - name: Build test report
-      uses: simple-elf/allure-report-action@v1.7
-      if: always()
-      with:
-        gh_pages: gh-pages-allure-history
-        allure_history: gh-pages-allure-history/allure-history
-        allure_results: allure-results-build
-    
-    - name: List directories and files
-      if: always()
-      run: |
-        echo "📁 Listado de carpetas en el workspace:"
-        ls -R
+      # 7. Generar informe con historial
+      - name: Build test report
+        uses: simple-elf/allure-report-action@v1.7
+        if: always()
+        with:
+          gh_pages: allure-history
+          allure_history: allure-history
+          allure_results: allure-results
+      # 8. Publicar informe en GitHub Pages
+      - name: Publish test report
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
 
-    - name: Publish test report
-      uses: peaceiris/actions-gh-pages@v3
-      if: always()
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_branch: gh-pages
-        publish_dir: allure-history
+      # 9. Mostrar URL del informe
+      - name: Show Allure Report URL
+        if: always()
+        run: |
+          echo "✅ El informe de Allure está disponible en:"
+          echo "https://molixmoli.github.io/gh-actions-course/last-history/"
