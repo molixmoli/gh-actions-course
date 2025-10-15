@@ -1,0 +1,74 @@
+name: "Workflow con Pytest"
+
+on:
+    workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      if: always()
+      continue-on-error: true
+      with:
+        ref: gh-pages # branch name
+        path: gh-pages-dir # checkout path
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m venv .venv
+        source .venv/bin/activate
+        pip install pytest
+
+    - name: Run tests
+      run: |
+        source .venv/bin/activate
+        pytest -v
+
+    - name: HTML Report
+      if: always()
+      uses: mgrybyk-org/html-trend-report-action@v1
+      id: html-report # used in comment to PR
+      with:
+        report_id: 'Jacoco Report'
+        gh_pages: 'gh-pages-dir'
+        report_dir: 'test/html' # provide path to folder containing the html report
+
+    - name: Chart Report (single csv)
+      if: ${{ always() }}
+      uses: mgrybyk-org/html-trend-report-action@v1
+      id: chart-report # used in comment to PR
+      with:
+        report_id: 'Trend Report'
+        gh_pages: 'gh-pages-dir'
+        report_dir: 'test/data.csv' # provide path to csv file
+        list_dirs: ${{ github.ref == 'refs/heads/main' }}
+        report_type: csv
+
+    - name: Chart Report (multiple csv)
+      if: ${{ always() }}
+      uses: mgrybyk-org/html-trend-report-action@v1
+      id: chart-report-multi # used in comment to PR  
+      with:
+        report_id: 'Trend Report'
+        gh_pages: 'gh-pages-dir'
+        report_dir: 'test/csv' # provide path to folder containing csv files
+        report_type: csv
+
+    - name: Git Commit and Push Action
+      uses: mgrybyk-org/git-commit-pull-push-action@v1
+      if: always()
+      with:
+        repository: gh-pages-dir
+        branch: gh-pages
+        pull_args: --rebase -X ours
