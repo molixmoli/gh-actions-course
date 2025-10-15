@@ -34,6 +34,7 @@ jobs:
         python -m venv .venv
         source .venv/bin/activate
         pip install pytest
+        pip install allure-pytest
 
     - name: Run tests
       run: |
