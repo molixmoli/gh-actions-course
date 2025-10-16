@@ -29,22 +29,22 @@ jobs:
 
     - name: Run tests
       run: |
-        pytest --alluredir=./allure-results-build -v
+        pytest --alluredir=./allure-results -v
       continue-on-error: true
 
     - name: Load Allure history
       uses: actions/checkout@v3
       with:
         ref: gh-pages
-        path: gh-pages-allure-history
+        path: gh-pages
 
     - name: Build test report
       uses: simple-elf/allure-report-action@v1.7
       if: always()
       with:
-        gh_pages: gh-pages-allure-history
-        allure_history: gh-pages-allure-history/allure-history
-        allure_results: allure-results-build
+        gh_pages: gh-pages
+        allure_history: allure-history
+        allure_results: allure-results
     
     - name: List directories and files
       if: always()
