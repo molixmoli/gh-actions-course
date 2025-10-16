@@ -29,7 +29,6 @@ jobs:
 
     - name: Run tests
       run: |
-        source .venv/bin/activate
         pytest --alluredir=./allure-results-build -v
       continue-on-error: true
 
